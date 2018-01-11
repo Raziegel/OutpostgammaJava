@@ -8,11 +8,16 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
+import javax.imageio.*;
+import java.net.*;
+import java.io.*;
+//import javax.imageio;
+import java.applet.*;
 
 
 public class Main {
@@ -21,7 +26,17 @@ public class Main {
 	public static void main(String[] args) {
 		JFrame win=new JFrame(); // Crée la fenetre principale
 		JPanel jp=(JPanel) win.getContentPane(); // Récupère le conteneur de la fenêtre
+    BufferedImage img = null;
+    try {
+    URL url = new URL("file:/assets/Plateau.png");
+
+    img = ImageIO.read(url);
+  } catch (IOException e) {
+  }
+
+
 		final AffGrille jp2=new AffGrille(); // Crée une instance de la classe privée AffGrille
+
 		jp2.addMouseMotionListener(new MouseMotionListener(){
 			Polygon p;
 			@Override
@@ -32,10 +47,14 @@ public class Main {
 
 			@Override
 			public void mouseMoved(MouseEvent arg0) {
+
+
+
 				p=jp2.pol;
 				if(!p.contains(arg0.getPoint())){
 					jp2.repaint();
 				}
+
 			}
 
 
@@ -45,12 +64,14 @@ public class Main {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				super.mouseClicked(arg0);
-				JOptionPane.showMessageDialog(null,"Hexagone n°:"+jp2.numero);
+				// JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero);
+        JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero +"/ x: "+jp2.x +" y: "+jp2.y +" z: "+jp2.z);
 			}
 
 		});// Evenement qui survient au clicque
 		jp.add(jp2);// Ajoute le composant à la fenêtre
-		win.setSize(640, 480);// Redimensionne la fenetre
+    win.setExtendedState(java.awt.Frame.MAXIMIZED_BOTH);
+		// win.setSize(1920, 1080);// Redimensionne la fenetre
 		win.setVisible(true);// Affiche la fenetre
 
 		win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);// Permet de quiter l'application à la fermeture de la fenêtre
@@ -62,6 +83,10 @@ public class Main {
 class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexagonale.
 	final static int cote=26; // Ceci définit la taille du côté d'un polygone
 	int numero=0; // Retien le n° du polygone sur lequel est la souris
+  int x = 0;
+  int y = 0;
+  int z = 0;
+
 	Polygon pol;
 	@Override
 	public void paint(Graphics arg0) {
@@ -89,6 +114,10 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 				if(p!=null && poly.contains(p)){
 					hovered=new Point(c*r.width, (int)(l*cote*1.5));
 					numero=l*10+c;
+          z=l;
+          x=c;
+          y=-c;
+
 					pol=poly;
 				}
 				g2d.draw(poly);
@@ -104,16 +133,36 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 				if(p!=null && poly.contains(p)){
 					hovered=new Point(c*r.width+r.width/2,  (int)(l*cote*1.5+0.5));
 					numero=l*10+c;
+          z=l;
+          x=c;
+          y=-c;
 					pol=poly;
 				}
 				g2d.draw(poly);
 			}
 		}
 		if(hovered!=null){
+      arg0.setColor(Color.yellow);
+      g2d.setStroke(bs3);
+      Polygon v1=getPolygon(hovered.x+(2*cote-8), hovered.y,cote);
+      g2d.draw(v1);
+      Polygon v2=getPolygon(hovered.x-(2*cote-8), hovered.y,cote);
+      g2d.draw(v2);
+      Polygon v3=getPolygon(hovered.x-cote+4, hovered.y+(cote+14),cote);
+      g2d.draw(v3);
+      Polygon v4=getPolygon(hovered.x+cote-4, hovered.y+(cote+14),cote);
+      g2d.draw(v4);
+      Polygon v5=getPolygon(hovered.x+cote-4, hovered.y-(cote+12),cote);
+      g2d.draw(v5);
+      Polygon v6=getPolygon(hovered.x-cote+4, hovered.y-(cote+12),cote);
+      g2d.draw(v6);
+
 			arg0.setColor(Color.red);
 			g2d.setStroke(bs3);
 			Polygon p=getPolygon(hovered.x, hovered.y,cote);
 			g2d.draw(p);
+
+
 		}
 	}
 

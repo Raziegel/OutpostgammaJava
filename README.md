@@ -1,6 +1,6 @@
 # OutpostgammaJava
 
-David Gallantin
+David Galantin
 Mars Emmanuel
 Prud'Homme Thibaut
 Mazza Yoann
