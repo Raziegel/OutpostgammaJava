@@ -66,11 +66,10 @@ public class Main {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				super.mouseClicked(arg0);
-        Hex[] tab = jp2.grid.GetNeighbours(jp2.x, jp2.y);
+        // Hex[] tab = jp2.grid.GetNeighbours(jp2.x, jp2.y);
 				// JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero);
-        // JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero +"/ x: "+jp2.grid.Lignes[jp2.x][jp2.y].x +" y: "+jp2.grid.Lignes[jp2.x][jp2.y].y +" z: "+jp2.grid.Lignes[jp2.x][jp2.y].z +" deepl: "+jp2.grid.Lignes[jp2.x][jp2.y].deep
-        // +" neighbours:" + tab );
-        JOptionPane.showMessageDialog(null," neighbour 1 x:" + tab[0].x + " neighbour 1 y:" + tab[0].y );
+        JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero +"/ x: "+jp2.grid.Lignes[jp2.x][jp2.y].x +" y: "+jp2.grid.Lignes[jp2.x][jp2.y].y +" z: "+jp2.grid.Lignes[jp2.x][jp2.y].z +" deepl: "+jp2.grid.Lignes[jp2.x][jp2.y].deep);
+        // JOptionPane.showMessageDialog(null," neighbour 1 x:" + tab[0].x + " neighbour 1 y:" + tab[0].y );
 			}
 
 		});// Evenement qui survient au clicque
@@ -169,13 +168,20 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 		}
 		if(hovered!=null){
       arg0.setColor(Color.yellow);
-
+      arg0.setColor(Color.red);
+			g2d.setStroke(bs3);
+			Polygon p=getPolygon(hovered.x, hovered.y,cote);
+			g2d.draw(p);
       g2d.setStroke(bs3);
-      // JOptionPane.showMessageDialog(null, "x : "+ hovered.x + " / y :"+ hovered.y);
+
 
        Hex[] Neighbours = grid.GetNeighbours(hovered.y/39,hovered.x/44  );
+       // if (Neighbours[5].x>=0) {
+       //   JOptionPane.showMessageDialog(null, "x :" + Neighbours[5]);
+       //
+       // }
 
-       if (Neighbours[0] != null) {
+       if (Neighbours[0].x>=0) {
          arg0.setColor(Color.blue);
 
          if (Neighbours[0].z%2==0) {
@@ -189,7 +195,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
          }
 
        }
-        if (Neighbours[1] != null) {
+        if (Neighbours[1].x>=0) {
           arg0.setColor(Color.green);
           if (Neighbours[1].z%2==0) {
              Polygon p0 = Neighbours[1].DrawHexa(Neighbours[1].x*r.width, (int)(Neighbours[1].z*cote*1.5),cote);
@@ -202,7 +208,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
           }
 
         }
-        if (Neighbours[2] != null) {
+        if (Neighbours[2].x>=0) {
           arg0.setColor(Color.orange);
           if (Neighbours[2].z%2==0) {
              Polygon p0 = Neighbours[2].DrawHexa(Neighbours[2].x*r.width, (int)(Neighbours[2].z*cote*1.5),cote);
@@ -215,7 +221,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
           }
 
         }
-        if (Neighbours[3] != null) {
+        if (Neighbours[3].x>=0) {
           arg0.setColor(Color.pink);
           if (Neighbours[3].z%2==0) {
              Polygon p0 = Neighbours[3].DrawHexa((Neighbours[3].x+1)*r.width, (int)(Neighbours[3].z*cote*1.5),cote);
@@ -228,7 +234,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
           }
 
         }
-        if (Neighbours[4] != null) {
+        if (Neighbours[4].x>=0) {
           arg0.setColor(Color.black);
           if (Neighbours[4].z%2==0) {
              Polygon p0 = Neighbours[4].DrawHexa((Neighbours[4].x+1)*r.width, (int)(Neighbours[4].z*cote*1.5),cote);
@@ -241,7 +247,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
           }
 
         }
-        if (Neighbours[5] != null) {
+        if (Neighbours[5].x>=0) {
           arg0.setColor(Color.gray);
           if (Neighbours[5].z%2==0) {
              Polygon p0 = Neighbours[5].DrawHexa(Neighbours[5].x*r.width, (int)(Neighbours[5].z*cote*1.5),cote);
@@ -254,23 +260,9 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
           }
 
         }
-      // Polygon v1=getPolygon(hovered.x+(2*cote-8), hovered.y,cote);
-      // g2d.draw(v1);
-      // Polygon v2=getPolygon(hovered.x-(2*cote-8), hovered.y,cote);
-      // g2d.draw(v2);
-      // Polygon v3=getPolygon(hovered.x-cote+4, hovered.y+(cote+14),cote);
-      // g2d.draw(v3);
-      // Polygon v4=getPolygon(hovered.x+cote-4, hovered.y+(cote+14),cote);
-      // g2d.draw(v4);
-      // Polygon v5=getPolygon(hovered.x+cote-4, hovered.y-(cote+12),cote);
-      // g2d.draw(v5);
-      // Polygon v6=getPolygon(hovered.x-cote+4, hovered.y-(cote+12),cote);
-      // g2d.draw(v6);
 
-			arg0.setColor(Color.red);
-			g2d.setStroke(bs3);
-			Polygon p=getPolygon(hovered.x, hovered.y,cote);
-			g2d.draw(p);
+
+
 
 
 		}
@@ -300,29 +292,85 @@ class Grid {
 
   public Hex[] GetNeighbours(int line, int column){
     Hex[] Neighbours = new Hex[6];
-    if (this.Lignes[line-1][column]!=null) {
-      Neighbours[0] = this.Lignes[line-1][column];
-    }
-    if (this.Lignes[line-1][column+1]!=null) {
-      Neighbours[1] = this.Lignes[line-1][column+1];
-    }
-    if (this.Lignes[line][column+1]!=null) {
-      Neighbours[2] = this.Lignes[line][column+1];
+    if (line%2==0) {
 
-    }
-    if (this.Lignes[line+1][column]!=null) {
-      Neighbours[3] = this.Lignes[line+1][column];
+      if ((line-1)>=0) {
+        Neighbours[0] = this.Lignes[line-1][column];
+      }else if( column==0  ){
+        Neighbours[0] = new Hex(-1, -1, -1);
+      }else{
+        Neighbours[0] = new Hex(-1, -1, -1);
+      }
+      if ((line-1)>=0 && column+1<=29) {
+        Neighbours[1] = this.Lignes[line-1][column+1];
+      }else{
+        Neighbours[1] = new Hex(-1, -1, -1);
+      }
+      if (column+1<=29) {
+        Neighbours[2] = this.Lignes[line][column+1];
 
-    }
-    if (this.Lignes[line+1][column-1]!=null) {
-      Neighbours[4] = this.Lignes[line+1][column-1];
+      }else{
+        Neighbours[2] = new Hex(-1, -1, -1);
+      }
+      if ((line+1)<=29) {
+        Neighbours[3] = this.Lignes[line+1][column];
 
-    }
-    if (this.Lignes[line][column-1]!=null) {
-      Neighbours[5] = this.Lignes[line][column-1];
+      }else{
+        Neighbours[3] = new Hex(-1, -1, -1);
+      }
+      if ((line+1)<=29 && column-1>=0) {
+        Neighbours[4] = this.Lignes[line+1][column-1];
 
+      }else{
+        Neighbours[4] = new Hex(-1, -1, -1);
+      }
+      if ((column-1)>=0) {
+        Neighbours[5] = this.Lignes[line][column-1];
+
+      }else{
+        Neighbours[5] = new Hex(-1, -1, -1);
+      }
+      return Neighbours;
+    }else{
+      if ((line-1)>=0) {
+        Neighbours[0] = this.Lignes[line-1][column];
+      }else{
+        Neighbours[0] = new Hex(-1, -1, -1);
+      }
+      if ((line-1)>=0 && column+1<=29) {
+        Neighbours[1] = this.Lignes[line-1][column+1];
+      }else{
+        Neighbours[1] = new Hex(-1, -1, -1);
+      }
+      if (column+1<=29) {
+        Neighbours[2] = this.Lignes[line][column+1];
+
+      }else{
+        Neighbours[2] = new Hex(-1, -1, -1);
+      }
+      if ((line+1)<=29) {
+        Neighbours[3] = this.Lignes[line+1][column];
+
+      }else{
+        Neighbours[3] = new Hex(-1, -1, -1);
+      }
+      if ((line+1)<=29 && column-1>=0  ) {
+        Neighbours[4] = this.Lignes[line+1][column-1];
+
+      }else if(column==0){
+        Neighbours[4] = this.Lignes[line+1][0];
+      }else{
+        Neighbours[4] = new Hex(-1, -1, -1);
+      }
+      if ((column-1)>=0) {
+        Neighbours[5] = this.Lignes[line][column-1];
+
+      }else{
+        Neighbours[5] = new Hex(-1, -1, -1);
+      }
+      return Neighbours;
     }
-    return Neighbours;
+
   }
 
 }
