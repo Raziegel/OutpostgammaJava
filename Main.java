@@ -66,8 +66,11 @@ public class Main {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				super.mouseClicked(arg0);
+        Hex[] tab = jp2.grid.GetNeighbours(jp2.x, jp2.y);
 				// JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero);
-        JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero +"/ x: "+jp2.grid.Lignes[jp2.x][jp2.y].x +" y: "+jp2.grid.Lignes[jp2.x][jp2.y].y +" z: "+jp2.grid.Lignes[jp2.x][jp2.y].z +" deepl: "+jp2.grid.Lignes[jp2.x][jp2.y].deep );
+        // JOptionPane.showMessageDialog(null,"Hexagone n:"+jp2.numero +"/ x: "+jp2.grid.Lignes[jp2.x][jp2.y].x +" y: "+jp2.grid.Lignes[jp2.x][jp2.y].y +" z: "+jp2.grid.Lignes[jp2.x][jp2.y].z +" deepl: "+jp2.grid.Lignes[jp2.x][jp2.y].deep
+        // +" neighbours:" + tab );
+        JOptionPane.showMessageDialog(null," neighbour 1 x:" + tab[0].x + " neighbour 1 y:" + tab[0].y );
 			}
 
 		});// Evenement qui survient au clicque
@@ -87,10 +90,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 	int numero=0; // Retien le n° du polygone sur lequel est la souris
   int x = 0;
   int y = 0;
-  int z = 0;
+
 
 	Polygon pol;
   Grid grid;
+
 	@Override
 	public void paint(Graphics arg0) {
     Grid grid = new Grid();
@@ -120,7 +124,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 				Point p;
 				p=getMousePosition();
 
-				Polygon poly=getPolygon(c*r.width, (int)(l*cote*1.5),cote);
+				// Polygon poly=getPolygon(c*r.width, (int)(l*cote*1.5),cote);
 
         hex = new Hex(c, -c, l);
         grid.Lignes[l][c]= hex;
@@ -128,13 +132,13 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
         Polygon hex0 = hex.DrawHexa(c*r.width, (int)(l*cote*1.5),cote);
 
 
-				if(p!=null && poly.contains(p)){
+				if(p!=null && hex0.contains(p)){
 					hovered=new Point(c*r.width, (int)(l*cote*1.5));
 					numero=l*10+c;
           x=l;
           y=c;
 
-					pol=poly;
+					pol=hex0;
           this.grid=grid;
 				}
 				g2d.draw(hex0);
@@ -157,7 +161,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
           x=l;
           y=c;
 
-          pol=poly;
+          pol=hex1;
           this.grid=grid;
 				}
 				g2d.draw(hex1);
@@ -167,23 +171,101 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
       arg0.setColor(Color.yellow);
 
       g2d.setStroke(bs3);
-       // Neighbours = grid.GetNeighbours(hovered.x,hovered.y);
-      // for (int i=0; i< Neighbours.length;i++ ) {
-      //   Polygon p0 = Neighbours[i].DrawHexa(Neighbours[i].x*r.width+r.width/2, (int)(Neighbours[i].z*cote*1.5+0.5),cote);
-      //   g2d.draw(p0);
-      // }
-      Polygon v1=getPolygon(hovered.x+(2*cote-8), hovered.y,cote);
-      g2d.draw(v1);
-      Polygon v2=getPolygon(hovered.x-(2*cote-8), hovered.y,cote);
-      g2d.draw(v2);
-      Polygon v3=getPolygon(hovered.x-cote+4, hovered.y+(cote+14),cote);
-      g2d.draw(v3);
-      Polygon v4=getPolygon(hovered.x+cote-4, hovered.y+(cote+14),cote);
-      g2d.draw(v4);
-      Polygon v5=getPolygon(hovered.x+cote-4, hovered.y-(cote+12),cote);
-      g2d.draw(v5);
-      Polygon v6=getPolygon(hovered.x-cote+4, hovered.y-(cote+12),cote);
-      g2d.draw(v6);
+      // JOptionPane.showMessageDialog(null, "x : "+ hovered.x + " / y :"+ hovered.y);
+
+       Hex[] Neighbours = grid.GetNeighbours(hovered.y/39,hovered.x/44  );
+
+       if (Neighbours[0] != null) {
+         arg0.setColor(Color.blue);
+
+         if (Neighbours[0].z%2==0) {
+            Polygon p0 = Neighbours[0].DrawHexa(Neighbours[0].x*r.width, (int)(Neighbours[0].z*cote*1.5),cote);
+            g2d.draw(p0);
+
+         }else{
+           Polygon p0 = Neighbours[0].DrawHexa((Neighbours[0].x-1)*r.width+r.width/2, (int)(Neighbours[0].z*cote*1.5+0.5),cote);
+           g2d.draw(p0);
+
+         }
+
+       }
+        if (Neighbours[1] != null) {
+          arg0.setColor(Color.green);
+          if (Neighbours[1].z%2==0) {
+             Polygon p0 = Neighbours[1].DrawHexa(Neighbours[1].x*r.width, (int)(Neighbours[1].z*cote*1.5),cote);
+             g2d.draw(p0);
+
+          }else{
+            Polygon p0 = Neighbours[1].DrawHexa((Neighbours[1].x-1)*r.width+r.width/2, (int)(Neighbours[1].z*cote*1.5+0.5),cote);
+            g2d.draw(p0);
+
+          }
+
+        }
+        if (Neighbours[2] != null) {
+          arg0.setColor(Color.orange);
+          if (Neighbours[2].z%2==0) {
+             Polygon p0 = Neighbours[2].DrawHexa(Neighbours[2].x*r.width, (int)(Neighbours[2].z*cote*1.5),cote);
+             g2d.draw(p0);
+
+          }else{
+            Polygon p0 = Neighbours[2].DrawHexa(Neighbours[2].x*r.width+r.width/2, (int)(Neighbours[2].z*cote*1.5+0.5),cote);
+            g2d.draw(p0);
+
+          }
+
+        }
+        if (Neighbours[3] != null) {
+          arg0.setColor(Color.pink);
+          if (Neighbours[3].z%2==0) {
+             Polygon p0 = Neighbours[3].DrawHexa((Neighbours[3].x+1)*r.width, (int)(Neighbours[3].z*cote*1.5),cote);
+             g2d.draw(p0);
+
+          }else{
+            Polygon p0 = Neighbours[3].DrawHexa(Neighbours[3].x*r.width+r.width/2, (int)(Neighbours[3].z*cote*1.5+0.5),cote);
+            g2d.draw(p0);
+
+          }
+
+        }
+        if (Neighbours[4] != null) {
+          arg0.setColor(Color.black);
+          if (Neighbours[4].z%2==0) {
+             Polygon p0 = Neighbours[4].DrawHexa((Neighbours[4].x+1)*r.width, (int)(Neighbours[4].z*cote*1.5),cote);
+             g2d.draw(p0);
+
+          }else{
+            Polygon p0 = Neighbours[4].DrawHexa(Neighbours[4].x*r.width+r.width/2, (int)(Neighbours[4].z*cote*1.5+0.5),cote);
+            g2d.draw(p0);
+
+          }
+
+        }
+        if (Neighbours[5] != null) {
+          arg0.setColor(Color.gray);
+          if (Neighbours[5].z%2==0) {
+             Polygon p0 = Neighbours[5].DrawHexa(Neighbours[5].x*r.width, (int)(Neighbours[5].z*cote*1.5),cote);
+             g2d.draw(p0);
+
+          }else{
+            Polygon p0 = Neighbours[5].DrawHexa(Neighbours[5].x*r.width+r.width/2, (int)(Neighbours[5].z*cote*1.5+0.5),cote);
+            g2d.draw(p0);
+
+          }
+
+        }
+      // Polygon v1=getPolygon(hovered.x+(2*cote-8), hovered.y,cote);
+      // g2d.draw(v1);
+      // Polygon v2=getPolygon(hovered.x-(2*cote-8), hovered.y,cote);
+      // g2d.draw(v2);
+      // Polygon v3=getPolygon(hovered.x-cote+4, hovered.y+(cote+14),cote);
+      // g2d.draw(v3);
+      // Polygon v4=getPolygon(hovered.x+cote-4, hovered.y+(cote+14),cote);
+      // g2d.draw(v4);
+      // Polygon v5=getPolygon(hovered.x+cote-4, hovered.y-(cote+12),cote);
+      // g2d.draw(v5);
+      // Polygon v6=getPolygon(hovered.x-cote+4, hovered.y-(cote+12),cote);
+      // g2d.draw(v6);
 
 			arg0.setColor(Color.red);
 			g2d.setStroke(bs3);
@@ -194,9 +276,6 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 		}
 	}
 
-	public Polygon getPolHover(){
-		return pol;
-	}
 
 	public static Polygon getPolygon(int x,int y,int cote){// Forme le polygone
 		int haut=cote/2;
@@ -221,12 +300,28 @@ class Grid {
 
   public Hex[] GetNeighbours(int line, int column){
     Hex[] Neighbours = new Hex[6];
-    Neighbours[0] = this.Lignes[line-1][column];
-    Neighbours[1] = this.Lignes[line-1][column+1];
-    Neighbours[2] = this.Lignes[line][column+1];
-    Neighbours[3] = this.Lignes[line+1][column];
-    Neighbours[4] = this.Lignes[line+1][column-1];
-    Neighbours[5] = this.Lignes[line][column-1];
+    if (this.Lignes[line-1][column]!=null) {
+      Neighbours[0] = this.Lignes[line-1][column];
+    }
+    if (this.Lignes[line-1][column+1]!=null) {
+      Neighbours[1] = this.Lignes[line-1][column+1];
+    }
+    if (this.Lignes[line][column+1]!=null) {
+      Neighbours[2] = this.Lignes[line][column+1];
+
+    }
+    if (this.Lignes[line+1][column]!=null) {
+      Neighbours[3] = this.Lignes[line+1][column];
+
+    }
+    if (this.Lignes[line+1][column-1]!=null) {
+      Neighbours[4] = this.Lignes[line+1][column-1];
+
+    }
+    if (this.Lignes[line][column-1]!=null) {
+      Neighbours[5] = this.Lignes[line][column-1];
+
+    }
     return Neighbours;
   }
 
@@ -239,6 +334,7 @@ class Hex extends Polygon{
    int z = 0;
 
    int deep =200;
+
    public Hex(int x_, int y_, int z_){
      this.x = x_;
      this.y = y_;
