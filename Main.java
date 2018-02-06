@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.*;
+import java.util.*;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
@@ -18,7 +20,7 @@ import java.net.*;
 import java.io.*;
 //import javax.imageio;
 import java.applet.*;
-
+import javax.swing.*;
 
 public class Main {
 
@@ -26,13 +28,6 @@ public class Main {
 	public static void main(String[] args) {
 		JFrame win=new JFrame(); // Crée la fenetre principale
 		JPanel jp=(JPanel) win.getContentPane(); // Récupère le conteneur de la fenêtre
-    BufferedImage img = null;
-    try {
-    URL url = new URL("file:/assets/Plateau.png");
-
-    img = ImageIO.read(url);
-  } catch (IOException e) {
-  }
 
 
 		final AffGrille jp2=new AffGrille(); // Crée une instance de la classe privée AffGrille
@@ -85,7 +80,8 @@ public class Main {
 
 @SuppressWarnings("serial")
 class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexagonale.
-	final static int cote=26; // Ceci définit la taille du côté d'un polygone
+
+	final static int cote=30; // Ceci définit la taille du côté d'un polygone
 	int numero=0; // Retien le n° du polygone sur lequel est la souris
   int x = 0;
   int y = 0;
@@ -96,6 +92,8 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 
 	@Override
 	public void paint(Graphics arg0) {
+
+
     Grid grid = new Grid();
     Hex origine = new Hex(0,0,0);
     grid.Lignes[0][0] = origine;
@@ -109,7 +107,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 
 
 
+
 		g2d=(Graphics2D) arg0;
+	// 	ImageIcon d= new ImageIcon(getClass().getResource("/assets/Plateau.png"));
+	// Image img = d.getImage();
+	// g2d.drawImage(img,0,0,1300,1000,null);
 		BasicStroke bs1=new BasicStroke(1);// Permet de fixer l'épaisseur du trait dans la suite
 		BasicStroke bs3=new BasicStroke(3);// Idem
 
@@ -118,8 +120,8 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
     Hex hex = new Hex(0,0,0);
 
 
-		for(int l=0;l<30;l=l+2){// Remarquer le "+2" car la grille est constituée de 2 sous grilles (les lignes impaires sont décallées)
-			for(int c=0;c<30;c++){
+		for(int l=0;l<29;l=l+2){// Remarquer le "+2" car la grille est constituée de 2 sous grilles (les lignes impaires sont décallées)
+			for(int c=0;c<29;c++){
 				Point p;
 				p=getMousePosition();
 
@@ -128,11 +130,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
         hex = new Hex(c, -c, l);
         grid.Lignes[l][c]= hex;
 
-        Polygon hex0 = hex.DrawHexa(c*r.width, (int)(l*cote*1.5),cote);
+        Polygon hex0 = hex.DrawHexa((int)(l*cote*1.5),c*r.width, cote);
 
 
 				if(p!=null && hex0.contains(p)){
-					hovered=new Point(c*r.width, (int)(l*cote*1.5));
+					hovered=new Point( (int)(l*cote*1.5),c*r.width);
 					numero=l*10+c;
           x=l;
           y=c;
@@ -143,16 +145,16 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 				g2d.draw(hex0);
 			}
 		}
-		for(int l=1;l<30;l=l+2){
-			for(int c=0;c<30;c++)
+		for(int l=1;l<29;l=l+2){
+			for(int c=0;c<29;c++)
 			{
 				Point p;
 				p=getMousePosition();
-				Polygon poly=getPolygon(c*r.width+r.width/2,  (int)(l*cote*1.5+0.5),cote);
+				Polygon poly=getPolygon(  (int)(l*cote*1.5+0.5),c*r.width+r.width/2,cote);
         hex = new Hex(c, -c, l);
         grid.Lignes[l][c]= hex;
 
-        Polygon hex1 = hex.DrawHexa(c*r.width+r.width/2,  (int)(l*cote*1.5+0.5),cote);
+        Polygon hex1 = hex.DrawHexa( (int)(l*cote*1.5+0.5),c*r.width+r.width/2, cote);
 				//arg0.setColor(Color.black);
 				if(p!=null && poly.contains(p)){
 					hovered=new Point(c*r.width+r.width/2,  (int)(l*cote*1.5+0.5));
@@ -175,7 +177,7 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
       g2d.setStroke(bs3);
 
 
-       Hex[] Neighbours = grid.GetNeighbours(hovered.y/39,hovered.x/44  );
+       Hex[] Neighbours = grid.GetNeighbours(hovered.y/45,hovered.x/52  );
        // if (Neighbours[5].x>=0) {
        //   JOptionPane.showMessageDialog(null, "x :" + Neighbours[5]);
        //
@@ -185,11 +187,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
          arg0.setColor(Color.blue);
 
          if (Neighbours[0].z%2==0) {
-            Polygon p0 = Neighbours[0].DrawHexa(Neighbours[0].x*r.width, (int)(Neighbours[0].z*cote*1.5),cote);
+            Polygon p0 = Neighbours[0].DrawHexa( (int)(Neighbours[0].z*cote*1.5),Neighbours[0].x*r.width,cote);
             g2d.draw(p0);
 
          }else{
-           Polygon p0 = Neighbours[0].DrawHexa((Neighbours[0].x-1)*r.width+r.width/2, (int)(Neighbours[0].z*cote*1.5+0.5),cote);
+           Polygon p0 = Neighbours[0].DrawHexa( (int)(Neighbours[0].z*cote*1.5+0.5),(Neighbours[0].x-1)*r.width+r.width/2,cote);
            g2d.draw(p0);
 
          }
@@ -198,11 +200,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
         if (Neighbours[1].x>=0) {
           arg0.setColor(Color.green);
           if (Neighbours[1].z%2==0) {
-             Polygon p0 = Neighbours[1].DrawHexa(Neighbours[1].x*r.width, (int)(Neighbours[1].z*cote*1.5),cote);
+             Polygon p0 = Neighbours[1].DrawHexa((int)(Neighbours[1].z*cote*1.5),Neighbours[1].x*r.width, cote);
              g2d.draw(p0);
 
           }else{
-            Polygon p0 = Neighbours[1].DrawHexa((Neighbours[1].x-1)*r.width+r.width/2, (int)(Neighbours[1].z*cote*1.5+0.5),cote);
+            Polygon p0 = Neighbours[1].DrawHexa((int)(Neighbours[1].z*cote*1.5+0.5),(Neighbours[1].x-1)*r.width+r.width/2, cote);
             g2d.draw(p0);
 
           }
@@ -211,11 +213,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
         if (Neighbours[2].x>=0) {
           arg0.setColor(Color.orange);
           if (Neighbours[2].z%2==0) {
-             Polygon p0 = Neighbours[2].DrawHexa(Neighbours[2].x*r.width, (int)(Neighbours[2].z*cote*1.5),cote);
+             Polygon p0 = Neighbours[2].DrawHexa( (int)(Neighbours[2].z*cote*1.5),Neighbours[2].x*r.width,cote);
              g2d.draw(p0);
 
           }else{
-            Polygon p0 = Neighbours[2].DrawHexa(Neighbours[2].x*r.width+r.width/2, (int)(Neighbours[2].z*cote*1.5+0.5),cote);
+            Polygon p0 = Neighbours[2].DrawHexa( (int)(Neighbours[2].z*cote*1.5+0.5),Neighbours[2].x*r.width+r.width/2,cote);
             g2d.draw(p0);
 
           }
@@ -224,11 +226,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
         if (Neighbours[3].x>=0) {
           arg0.setColor(Color.pink);
           if (Neighbours[3].z%2==0) {
-             Polygon p0 = Neighbours[3].DrawHexa((Neighbours[3].x+1)*r.width, (int)(Neighbours[3].z*cote*1.5),cote);
+             Polygon p0 = Neighbours[3].DrawHexa( (int)(Neighbours[3].z*cote*1.5),(Neighbours[3].x+1)*r.width,cote);
              g2d.draw(p0);
 
           }else{
-            Polygon p0 = Neighbours[3].DrawHexa(Neighbours[3].x*r.width+r.width/2, (int)(Neighbours[3].z*cote*1.5+0.5),cote);
+            Polygon p0 = Neighbours[3].DrawHexa((int)(Neighbours[3].z*cote*1.5+0.5),Neighbours[3].x*r.width+r.width/2, cote);
             g2d.draw(p0);
 
           }
@@ -237,11 +239,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
         if (Neighbours[4].x>=0) {
           arg0.setColor(Color.black);
           if (Neighbours[4].z%2==0) {
-             Polygon p0 = Neighbours[4].DrawHexa((Neighbours[4].x+1)*r.width, (int)(Neighbours[4].z*cote*1.5),cote);
+             Polygon p0 = Neighbours[4].DrawHexa( (int)(Neighbours[4].z*cote*1.5),(Neighbours[4].x+1)*r.width,cote);
              g2d.draw(p0);
 
           }else{
-            Polygon p0 = Neighbours[4].DrawHexa(Neighbours[4].x*r.width+r.width/2, (int)(Neighbours[4].z*cote*1.5+0.5),cote);
+            Polygon p0 = Neighbours[4].DrawHexa((int)(Neighbours[4].z*cote*1.5+0.5),Neighbours[4].x*r.width+r.width/2, cote);
             g2d.draw(p0);
 
           }
@@ -250,11 +252,11 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
         if (Neighbours[5].x>=0) {
           arg0.setColor(Color.gray);
           if (Neighbours[5].z%2==0) {
-             Polygon p0 = Neighbours[5].DrawHexa(Neighbours[5].x*r.width, (int)(Neighbours[5].z*cote*1.5),cote);
+             Polygon p0 = Neighbours[5].DrawHexa( (int)(Neighbours[5].z*cote*1.5),Neighbours[5].x*r.width,cote);
              g2d.draw(p0);
 
           }else{
-            Polygon p0 = Neighbours[5].DrawHexa(Neighbours[5].x*r.width+r.width/2, (int)(Neighbours[5].z*cote*1.5+0.5),cote);
+            Polygon p0 = Neighbours[5].DrawHexa( (int)(Neighbours[5].z*cote*1.5+0.5),Neighbours[5].x*r.width+r.width/2,cote);
             g2d.draw(p0);
 
           }
@@ -274,11 +276,19 @@ class AffGrille extends JPanel{ // Classe personnelle qui crée une grile hexago
 		int larg=(int)(cote*(Math.sqrt(3)/2));
 		Polygon p=new Polygon();
 		p.addPoint(x,y+haut);// /
-		p.addPoint(x+larg,y); // \
-		p.addPoint(x+2*larg,y+haut);// |
-		p.addPoint(x+2*larg,y+(int)(1.5*cote)); // /
-		p.addPoint(x+larg,y+2*cote);// \
-		p.addPoint(x,y+(int)(1.5*cote));// |
+		p.addPoint(x+larg/2,y); // \
+		p.addPoint(x+(int)(1.5*larg),y);// |
+		p.addPoint(x+2*larg,y+haut); // /
+		p.addPoint(x+(int)(1.5*larg),y+2*haut);// |
+		p.addPoint(x+larg/2,y+2*haut);// \
+
+		// p.addPoint(x-larg,y);// /
+ 		// p.addPoint((x-larg)/2,y+haut); // \
+		// p.addPoint((x+larg)/2,y+haut); // \
+    //
+ 		// p.addPoint(x+larg,y);// /
+ 		// p.addPoint((x+larg)/2,y-haut); // \
+ 		// p.addPoint((x-larg)/2,y-haut); // \
 		return p;
 	}
 
@@ -357,8 +367,6 @@ class Grid {
       if ((line+1)<=29 && column-1>=0  ) {
         Neighbours[4] = this.Lignes[line+1][column-1];
 
-      }else if(column==0){
-        Neighbours[4] = this.Lignes[line+1][0];
       }else{
         Neighbours[4] = new Hex(-1, -1, -1);
       }
@@ -390,15 +398,15 @@ class Hex extends Polygon{
 
    }
    public Polygon DrawHexa(int x,int y,int cote){// Forme le polygone
- 		int haut=cote/2;
+		 int haut=cote/2;
  		int larg=(int)(cote*(Math.sqrt(3)/2));
  		Polygon p=new Polygon();
  		p.addPoint(x,y+haut);// /
- 		p.addPoint(x+larg,y); // \
- 		p.addPoint(x+2*larg,y+haut);// |
- 		p.addPoint(x+2*larg,y+(int)(1.5*cote)); // /
- 		p.addPoint(x+larg,y+2*cote);// \
- 		p.addPoint(x,y+(int)(1.5*cote));// |
+ 		p.addPoint(x+larg/2,y); // \
+ 		p.addPoint(x+(int)(1.5*larg),y);// |
+ 		p.addPoint(x+2*larg,y+haut); // /
+ 		p.addPoint(x+(int)(1.5*larg),y+2*haut);// |
+ 		p.addPoint(x+larg/2,y+2*haut);// \
  		return p;
   }
 }
