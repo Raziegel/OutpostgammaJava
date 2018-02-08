@@ -129,7 +129,7 @@ public class Main {
 			 jp2.mode=0;
 			}
 		}else{
-			JOptionPane.showMessageDialog(null,"Deplacement impossible, le cout en points dedéplacement est trop elevé");
+			JOptionPane.showMessageDialog(null,"Deplacement impossible, le cout en points deplacement est trop eleve");
 			jp2.selected = new Hex(-1,-1,-1);
 			jp2.mode=0;
 		}
